@@ -57,6 +57,29 @@ async def choose(ctx, *args):
         await ctx.send('Nani! Send at least 2 choices separated by spaces.')
 
 @bot.command()
+async def delete(ctx, num=10):
+    """
+    Delete a number of messages.
+    """
+    # TODO: catch non-integer arguments in function call
+    try:
+        if isinstance(num, int) and num <= 10:
+            message_list=[]
+            messages = await ctx.channel.history(limit=num).flatten()
+            for msg in messages:
+                messages_id = re.search('\d{18}', str(msg)).group()
+                message_list.append(messages_id)
+            # print(message_list)
+            for msg in message_list:
+                msg_obj = await ctx.channel.fetch_message(msg)
+                await msg_obj.delete()
+            await ctx.send(f'Deleted {num} messages...')
+        else:
+            await ctx.send('Please enter a number and is less than 10.')
+    except Exception as e:
+        print('Error')        
+
+@bot.command()
 async def poll(ctx, *args):
     """
     Ask a question and vote on it.
@@ -89,7 +112,7 @@ async def joke(ctx):
             # print('Successfully connected to API')
             pass
     except Exception as e:
-        print('Failed to retrieve API call')
+        print('Error: Failed to retrieve API call')
 
     joke_content = response.json()
     await ctx.send(f"{joke_content['setup']}\n||{joke_content['punchline']}||")
