@@ -1,6 +1,6 @@
-# main_3.py - discord bot using extension
+# main_3.py - discord bot using extension! Change ahoy
 
-import discord, random, re, os
+import discord, random, re, os, json, requests
 from urllib import request, parse
 from discord.ext import commands
 if not os.path.isfile('config.py'):
@@ -16,6 +16,7 @@ bot = commands.Bot(command_prefix=config.PREFIX, description="Test bot :)")
 async def on_ready():
     print(f'Logged on as {bot.user}') 
 
+# Commands
 @bot.command()
 async def ping(ctx):
     """
@@ -23,6 +24,7 @@ async def ping(ctx):
     """
     await ctx.send('pong')
 
+# using urllib web scraping
 @bot.command()
 async def comic(ctx, page = 'random'):
     """
@@ -44,7 +46,7 @@ async def choose(ctx, *args):
     """
     Have me choose between multiple choices.
     """
-    #splits by spaces; only single words allowed as choices
+    # splits by spaces; only single words allowed as choices
     try:
         if len(args) >= 2:
             chose = random.choice(args)
@@ -73,6 +75,24 @@ async def poll(ctx, *args):
     await embed_message.add_reaction("👎")
     await embed_message.add_reaction("🤷")
 
+# using requests and json API call
+@bot.command()
+async def joke(ctx):
+    """
+    Laugh at jokes.
+    """
+    try:
+        response = requests.get('https://official-joke-api.appspot.com/random_joke')
+        if response.status_code != 200:
+            raise e
+        else:
+            # print('Successfully connected to API')
+            pass
+    except Exception as e:
+        print('Failed to retrieve API call')
+
+    joke_content = response.json()
+    await ctx.send(f"{joke_content['setup']}\n||{joke_content['punchline']}||")
 
 @bot.listen()
 async def on_message(message):
