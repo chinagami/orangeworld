@@ -110,15 +110,34 @@ async def joke(ctx):
             raise e
         else:
             # print('Successfully connected to API')
-            pass
+            joke_content = response.json()
+            await ctx.send(f"{joke_content['setup']}\n||{joke_content['punchline']}||")
     except Exception as e:
         print('Error: Failed to retrieve API call')
 
-    joke_content = response.json()
-    await ctx.send(f"{joke_content['setup']}\n||{joke_content['punchline']}||")
+
+
+# neko bot
+@bot.command()
+async def neko(ctx, pic):
+    """
+    neko, kitsune, pat, hug, waifu, cry, kiss, slap, smug, punch
+    """
+    try:    
+        response = requests.get("https://neko-love.xyz/api/v1/" + pic)
+        if response.status_code != 200:
+            raise e
+        else:
+            neko_content = response.json()
+            await ctx.send(neko_content['url'])
+    except Exception as e:
+        print('Error')
 
 @bot.listen()
 async def on_message(message):
+    if message.author.bot == True:
+        return
+
     if message.content.lower().startswith('ree'):
         num_e = len(message.content)
         ee = 'E' * num_e
@@ -128,9 +147,12 @@ async def on_message(message):
             color = 0xFF0000
         )
         embed.set_thumbnail(url='https://cdn.discordapp.com/emojis/363417628775022603.png?v=1')
-        embed.set_footer(f'REE by {message.author} >:(')
+        embed.set_footer(text=f"REE by {message.author} >:(")
         await message.channel.send(embed=embed)
         # await bot.process_commands(message)
+    
+    if message.content.lower() == ('nice'):
+        await message.channel.send("``nice``")
 
 
 
