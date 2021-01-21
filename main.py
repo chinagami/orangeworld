@@ -1,4 +1,4 @@
-# main_3.py - discord bot using extension! Change ahoy
+# main_3.py - discord bot using extension! Now with Cogs!
 
 import discord, random, re, os, json, requests
 from urllib import request, parse
@@ -16,122 +16,19 @@ bot = commands.Bot(command_prefix=config.PREFIX, description="Test bot :)")
 async def on_ready():
     print(f'Logged on as {bot.user}') 
 
-# Commands
-@bot.command()
-async def ping(ctx):
-    """
-    Ping... pong!
-    """
-    await ctx.send('pong')
+# Start up the COGS
+if __name__ == "__main__":
+    for ext in config.COGS:
+        try:
+            bot.load_extension(ext)
+            print(f'Loaded extension {ext}')
+        except Exception as e:
+            print(f'Failed to load extension: {ext}')
 
-# using urllib web scraping
-@bot.command()
-async def comic(ctx, page = 'random'):
-    """
-    Get a "random" or "latest" comic from Cyanide & Happiness.
-    """
-    html_content = request.urlopen('https://explosm.net/comics/')
-    find_latest = re.findall('href="https://explosm.net/comics/(.{4})', html_content.read().decode())
-    
-    if page == 'random':
-        rand = random.randint(39, int(find_latest[0]))
-        await ctx.send('https://explosm.net/comics/' + str(rand))
-    elif page == 'latest':
-            await ctx.send('https://explosm.net/comics/' + find_latest[0])
-    else:
-        await ctx.send('Can\'t find the comic. Try \"latest\" or no arguments.')
-
-@bot.command()
-async def choose(ctx, *args):
-    """
-    Have me choose between multiple choices.
-    """
-    # splits by spaces; only single words allowed as choices
-    try:
-        if len(args) >= 2:
-            chose = random.choice(args)
-            await ctx.send(f'{chose}, I choose you!')
-        else:
-            raise e
-    except Exception as e:
-        await ctx.send('Nani! Send at least 2 choices separated by spaces.')
-
-@bot.command()
-async def delete(ctx, num=10):
-    """
-    Delete a number of messages.
-    """
-    # TODO: catch non-integer arguments in function call
-    try:
-        if isinstance(num, int) and num <= 10:
-            message_list=[]
-            messages = await ctx.channel.history(limit=num).flatten()
-            for msg in messages:
-                messages_id = re.search('\d{18}', str(msg)).group()
-                message_list.append(messages_id)
-            # print(message_list)
-            for msg in message_list:
-                msg_obj = await ctx.channel.fetch_message(msg)
-                await msg_obj.delete()
-            await ctx.send(f'Deleted {num} messages...')
-        else:
-            await ctx.send('Please enter a number and is less than 10.')
-    except Exception as e:
-        print('Error')        
-
-@bot.command()
-async def poll(ctx, *args):
-    """
-    Ask a question and vote on it.
-    """
-    poll_title = " ".join(args)
-    embed = discord.Embed(
-        title = "A new poll has been created!",
-        description = f"{poll_title}",
-        color = 0x00C997
-    )
-    embed.set_footer(
-        text=f"Poll created by: {ctx.message.author} • React to vote!"
-    )
-    embed_message = await ctx.send(embed=embed)
-    await embed_message.add_reaction("👍")
-    await embed_message.add_reaction("👎")
-    await embed_message.add_reaction("🤷")
-
-# using requests and json API call
-@bot.command()
-async def joke(ctx):
-    """
-    Laugh at jokes.
-    """
-    try:
-        response = requests.get('https://official-joke-api.appspot.com/random_joke')
-        if response.status_code != 200:
-            raise e
-        else:
-            # print('Successfully connected to API')
-            joke_content = response.json()
-            await ctx.send(f"{joke_content['setup']}\n||{joke_content['punchline']}||")
-    except Exception as e:
-        print('Error: Failed to retrieve API call')
-
-
-
-# neko bot
-@bot.command()
-async def neko(ctx, pic):
-    """
-    neko, kitsune, pat, hug, waifu, cry, kiss, slap, smug, punch
-    """
-    try:    
-        response = requests.get("https://neko-love.xyz/api/v1/" + pic)
-        if response.status_code != 200:
-            raise e
-        else:
-            neko_content = response.json()
-            await ctx.send(neko_content['url'])
-    except Exception as e:
-        print('Error')
+@bot.event
+async def on_command_completion(ctx):
+    command = ctx.command.qualified_name
+    print(f"{ctx.message.author} ID: {ctx.message.author.id} executed command {config.PREFIX}{command}")
 
 @bot.listen()
 async def on_message(message):
