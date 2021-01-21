@@ -1,6 +1,6 @@
 #fun.py - COG for funny jokes and memes
 
-import discord, json, requests, re
+import discord, json, requests, re, random
 from urllib import request, parse
 from discord.ext import commands
 
