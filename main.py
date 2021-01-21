@@ -28,7 +28,7 @@ if __name__ == "__main__":
 @bot.event
 async def on_command_completion(ctx):
     command = ctx.command.qualified_name
-    print(f"{ctx.message.author} ID: {ctx.message.author.id} executed command {config.PREFIX}{command}")
+    print(f"{ctx.message.author} ID: {ctx.message.author.id} in channel {ctx.message.channel}: executed command {config.PREFIX}{command}")
 
 @bot.listen()
 async def on_message(message):
