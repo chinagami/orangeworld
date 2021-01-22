@@ -1,3 +1,3 @@
 PREFIX = ("$")
 TOKEN = "TOKEN HERE"
-COGS = ["utility", "fun", "images"]
+COGS = ["utility", "fun", "images", "text"]

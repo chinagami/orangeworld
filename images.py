@@ -22,7 +22,20 @@ class Images(commands.Cog):
                 neko_content = response.json()
                 await ctx.send(neko_content['url'])
         except Exception as e:
-            print('Error')
+            print(f'Error with {ctx.command}')
+
+    @commands.command()
+    async def dog(self, ctx):
+        """Adopt a dog!"""
+        try:
+            response = requests.get("https://random.dog/woof.json")
+            if response.status_code != 200:
+                raise e
+            else:
+                dog_content = response.json()
+                await ctx.send(dog_content['url'])
+        except Exception as e:
+            print(f"Error with {ctx.command}")
 
 # register the cog to be used
 def setup(bot):
