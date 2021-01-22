@@ -45,21 +45,21 @@ class Text(commands.Cog):
     @commands.command()
     async def urban(self, ctx, *args):
         """Urban dictionary that sh*t"""
-        print("starting urban command")
         search = " ".join(args)
-        print(f"search keyword is: {search}")
+        # print(f"search keyword is: {search}")
         try:
             response = requests.get(f'http://api.urbandictionary.com/v0/define?term={search}')
             if response.status_code != 200:
                 raise e
             else:
-                print('Successfully connected to API')
+                # print('Successfully connected to API')
                 urban_content = response.json()
-                definition = urban_content['list'][0]['definition']
-                example = urban_content['list'][0]['example']
-                link = urban_content['list'][0]['permalink']
         except Exception as e:
             print('Error: Failed to retrieve API call')
+
+        definition = urban_content['list'][0]['definition']
+        example = urban_content['list'][0]['example']
+        link = urban_content['list'][0]['permalink']
 
         embed = discord.Embed(
             title = search,
